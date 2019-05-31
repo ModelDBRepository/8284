@@ -1,0 +1,230 @@
+/* 
+Chen et al. Nat. Medicine 2001 (modeling by Ildiko Aradi, iaradi@uci.edu)
+Ih channel kinetics characteristic to Control animal; cell depolarized just below
+firing threshold; increasing densities of Ih along the somatodendritic axis, 
+train of IPSPs coming to the perisomatic region does NOT lead to rebound firing */
+
+secondorder=2 
+tstep=0
+period=10
+dt=0.01
+tstop=2000
+steps_per_ms=10
+
+	begintemplate Cell
+create soma, adend1, adend2, adend3, bdend, axon
+public soma, adend1, adend2, adend3, bdend, axon
+
+objectvar stim1, stim2
+
+nsy=18
+
+	objectvar syd[nsy]
+double syddeadtime[nsy], sydgsbar[nsy]
+double sydtau1[nsy], sydtau2[nsy], sydes[nsy]
+
+proc init() {
+
+	soma {nseg=1 L=20 diam=20}
+	
+	adend1 {nseg=1 L=150 diam=2}
+	adend2 {nseg=1 L=150 diam=2}
+	adend3 {nseg=1 L=150 diam=2}
+	
+	bdend {nseg=2 L=200 diam=2}
+	axon {nseg=2 L=100 diam=0.5}
+
+	connect axon(0), soma(1)
+
+	connect adend1(0), soma(0.5)
+	connect adend2(0), adend1(1)
+	connect adend3(0), adend2(1)
+
+	connect bdend(1), soma(0)
+
+	    	soma {insert ichan
+	gnatbar_ichan=0.12
+	gkfbar_ichan=0.01
+	insert hyperso
+	ghyfbar_hyperso=0.0000
+	ghysbar_hyperso=0.0000
+	ghyhtfbar_hyperso=0.0015
+	ghyhtsbar_hyperso=0.0015} 
+
+
+	  	adend1 {insert ichan
+	gnatbar_ichan=0.05
+	gkfbar_ichan=0.01
+	insert hyperde1
+	ghyfbar_hyperde1=0.0048
+	ghysbar_hyperde1=0.0048
+	ghyhtfbar_hyperde1=0.00
+	ghyhtsbar_hyperde1=0.00} 
+
+	  	adend2 {insert ichan
+	gnatbar_ichan=0.05
+	gkfbar_ichan=0.01
+	insert hyperde2
+	ghyfbar_hyperde2=0.008
+	ghysbar_hyperde2=0.008
+	ghyhtfbar_hyperde2=0.00
+	ghyhtsbar_hyperde2=0.00} 
+
+	  	adend3 {insert ichan
+	gnatbar_ichan=0.05
+	gkfbar_ichan=0.01
+	insert hyperde3
+	ghyfbar_hyperde3=0.011
+	ghysbar_hyperde3=0.011
+	ghyhtfbar_hyperde3=0.0
+	ghyhtsbar_hyperde3=0.0} 
+
+	  	bdend {insert ichan
+	gnatbar_ichan=0.05
+	gkfbar_ichan=0.01
+	insert hyperde1
+	ghyfbar_hyperde1=0.00
+	ghysbar_hyperde1=0.00
+	ghyhtfbar_hyperde1=0.000
+	ghyhtsbar_hyperde1=0.000} 
+  	
+
+		axon {insert ichan
+	gnatbar_ichan=0.21
+	gkfbar_ichan=0.01
+	insert hyperso
+	ghyfbar_hyperso=0.00
+	ghysbar_hyperso=0.00
+	ghyhtfbar_hyperso=0.000
+	ghyhtsbar_hyperso=0.000} 
+
+	forall {Ra=210}	
+	forall {enat=50 ekf=-70 ehyf=-40 ehys=-40 
+					ehyhtf=-40 ehyhts=-40
+		gl_ichan=0.00025 el_ichan=-63 cm=1}
+
+
+soma stim1 = new IClamp(0.5)
+stim1.del=0
+stim1.dur=2700
+stim1.amp=0.1313
+
+soma stim2 = new IClamp(0.5)
+stim2.del=50
+stim2.dur=1000
+stim2.amp=0.0
+
+
+/* pp synapses perisomatically*/
+
+Tp = 20
+del=250
+
+	for k=0,5{
+sydgsbar[k]=0.01
+sydtau1[k]=1
+sydtau2[k]=10
+sydes[k]=-65
+syddeadtime[k]=del+k*Tp 
+
+soma syd[k] = new ppsyn(0.5)
+
+{syd[k].gsbar=sydgsbar[k] 
+syd[k].tau1=sydtau1[k] 
+syd[k].tau2=sydtau2[k] 
+syd[k].es=sydes[k]
+syd[k].deadtime=syddeadtime[k]}
+			}
+
+	for s=6,11{
+sydgsbar[s]=0.01
+sydtau1[s]=1
+sydtau2[s]=10
+sydes[s]=-65
+syddeadtime[s]=del+(s-6)*Tp 
+
+adend1 syd[s] = new ppsyn(0.5)
+
+{syd[s].gsbar=sydgsbar[s] 
+syd[s].tau1=sydtau1[s] 
+syd[s].tau2=sydtau2[s] 
+syd[s].es=sydes[s]
+syd[s].deadtime=syddeadtime[s]}
+			}
+	for s=12,17{
+sydgsbar[s]=0.01
+sydtau1[s]=1
+sydtau2[s]=10
+sydes[s]=-65
+syddeadtime[s]=del+(s-12)*Tp 
+
+axon syd[s] = new ppsyn(0.1)
+
+{syd[s].gsbar=sydgsbar[s] 
+syd[s].tau1=sydtau1[s] 
+syd[s].tau2=sydtau2[s] 
+syd[s].es=sydes[s]
+syd[s].deadtime=syddeadtime[s]}
+			}
+
+
+		}
+
+	endtemplate Cell
+
+objectvar cell
+
+cell = new Cell()
+
+/* original graph commented out
+
+objref g1
+
+g1 = new Graph()
+g1.size(0,tstop,-100,50)
+g1.addexpr("cell.soma.v(0.5)",2,1)
+/* g1.addexpr("cell.adend1.v(0.5)",3,1)
+g1.addexpr("cell.adend2.v(0.5)",4,1)
+g1.addexpr("cell.adend3.v(0.5)",5,1) */
+
+/* g1.addexpr("cell.adend1.v(0.5)",1,1)
+g1.addexpr("cell.adend2.v(0.5)",3,1)
+g1.addexpr("cell.adend3.v(0.5)",4,1) */
+
+/*
+proc label() {
+	g1.color(1)
+	g1.vfixed(1)
+	g1.label(0, .5, "mV")
+	g1.label(.4, .15, "t (ms)")
+	g1.label(.1, .01, "divers")
+}
+*/
+
+// label()
+
+// simulation control
+
+
+finitialize(-50)
+
+/*
+proc pl() {
+g1.begin()
+while(t<tstop) {
+if (tstep%period==0){
+g1.plot(t)
+g1.fastflush()
+print t, cell.soma.v(0.5)
+doNotify()}
+tstep=tstep+1
+fadvance()
+}
+g1.flush()
+doNotify()
+}
+*/
+
+// pl() // graphing is now done in mosinit.hoc
+
+

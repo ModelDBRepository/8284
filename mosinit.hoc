@@ -1,0 +1,29 @@
+load_file("nrngui.hoc")
+
+load_file("cntrl.ses")
+
+load_file("Ccellsyn.hoc")
+load_file("HTcellsyn.hoc")
+proc HT() {
+
+	cell = new HTCell()
+	print "HT treated cell with rebound firing"
+	access cell.soma
+	run()
+}
+
+proc Control() {
+
+	cell = new Cell()
+	print "Control (sham treated) cell with no rebound firing"
+	access cell.soma
+	run()
+}
+
+xpanel("Figure 5B",1)
+xlabel("Press a button to plot")
+xbutton(" HT ","HT()")
+xlabel(" rebound firing ")
+xbutton(" Control ","Control()")
+xlabel(" cell no rebound firing")
+xpanel()
