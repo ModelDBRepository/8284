@@ -83,10 +83,10 @@ INITIAL {
 	
 	m = minf
 	h = hinf
-      nf = nfinf
+	nf = nfinf
 	
 	VERBATIM
-	return 0;
+	return;
 	ENDVERBATIM
 }
 
