@@ -18,3 +18,8 @@ ppsyn.mod - inducing synaptic currents in HT and Control cells
 (Modeling by Ildiko Aradi, iaradi@uci.edu)
 
 Some modeling details available at http://www.ucihs.uci.edu/anatomy/soltesz/supp.htm
+
+Changelog
+---------
+2022-05: Updated MOD files to contain valid C++ and be compatible with the upcoming
+         versions 8.2 and 9.0 of NEURON.
