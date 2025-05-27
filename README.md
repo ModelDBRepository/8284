@@ -1,0 +1,28 @@
+Chen K, Aradi I, Thon N, Eghbal-Ahmadi M, Baram TZ, Soltesz I: Persistently modified
+h-channels after complex febrile seizures convert the seizure-induced enhancement of
+inhibition to hyperexcitability. *Nature Medicine*, 7(3) pp. 331-337, 2001.
+
+## Files
+
+- **Ccellsyn.hoc** - CONTROL cell
+- **HTcellsyn.hoc** - HT cell
+
+To simulate these cells, we need all of the following mechanisms:
+
+- ichan.mod - Na and K channel kinetics in HT and Control cells
+- hyperso.mod - HT and Control Ih channels in the soma
+- hyperde1.mod - HT and Control Ih channels in the proximal dendrites
+- hyperde2.mod - HT and Control Ih channels in the middle dendrites
+- hyperde3.mod - HT and Control Ih channels in the distal dendrites
+- ppsyn.mod - inducing synaptic currents in HT and Control cells
+
+(Modeling by Ildiko Aradi, iaradi@uci.edu)
+
+Some modeling details available at [http://www.ucihs.uci.edu/anatomy/soltesz/supp.htm](http://www.ucihs.uci.edu/anatomy/soltesz/supp.htm)
+
+Changelog
+---------
+2022-05: Updated MOD files to contain valid C++ and be compatible with the upcoming
+         versions 8.2 and 9.0 of NEURON.
+
+2025-05-27 – Standardized to Markdown.
